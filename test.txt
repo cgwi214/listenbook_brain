@@ -1,0 +1,37 @@
+﻿测试，
+记得先将
+D:\work\shopkeeper_brain\knowledge\processor\import_process\import_temp_dir\万用表的使用\hybrid_auto
+除了images目录以外全部清空
+D:\work\shopkeeper_brain\knowledge\processor\import_process\import_temp_dir\chunks.json
+记得删除
+python -m processor.import_process.main_graph
+python -m processor.import_process.nodes.entry_node
+python -m processor.import_process.nodes.pdf_to_md_node
+python -m processor.import_process.nodes.md_img_node
+python -m processor.import_process.nodes.document_split_node
+python -m processor.import_process.nodes.item_name_recognition_node
+python -m processor.import_process.nodes.bge_embedding_chunks_node
+python -m processor.import_process.nodes.import_milvus_node
+python -m processor.import_process.nodes.kg_graph_node
+python -m processor.query_process.main_graph "示波器怎么使用？"
+python -m processor.query_process.nodes.item_name_confirm_node
+python -m processor.query_process.nodes.vector_search_node
+python -m processor.query_process.nodes.hyde_search_node
+python -m processor.query_process.nodes.kg_search_node
+python -m processor.query_process.nodes.mcp_search_node
+python -m processor.query_process.nodes.rrf_node
+python -m processor.query_process.nodes.rerank_node
+python -m processor.query_process.nodes.answer_output_node
+启动
+python -m api.import_router
+python -m api.query_router
+http://127.0.0.1:8000/import
+http://127.0.0.1:8001/chat.html
+
+
+
+
+
+
+
+
