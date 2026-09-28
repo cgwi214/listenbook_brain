@@ -52,6 +52,10 @@ class QueryConfig:
     hyde_search_limit: int = field(
         default_factory=lambda: int(os.getenv("HYDE_SEARCH_LIMIT", "5"))
     )
+    hyde_enabled: bool = field(
+        default_factory=lambda: os.getenv("HYDE_ENABLED", "true").lower()
+        in ("1", "true", "yes", "y", "on")
+    )
 
     # ==================== 书名确认节点配置 ====================
     book_name_high_confidence: float = field(

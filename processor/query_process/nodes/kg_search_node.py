@@ -19,15 +19,15 @@ from json import JSONDecodeError
 from typing import List, Dict, Any, Tuple, Union
 from pymilvus import MilvusClient
 from langchain_core.messages import SystemMessage, HumanMessage
-from processor.query_process.state import QueryGraphState
-from processor.query_process.base import BaseNode, T
-from processor.query_process.exceptions import StateFieldError
-from utils.llm_client_util import get_llm_client
-from utils.bge_m3_embedding_util import get_beg_m3_embedding_model, generate_hybrid_embeddings
-from utils.milvus_util import get_milvus_client, create_hybrid_search_requests, execute_hybrid_search_query, \
+from knowledge.processor.query_process.state import QueryGraphState
+from knowledge.processor.query_process.base import BaseNode, T
+from knowledge.processor.query_process.exceptions import StateFieldError
+from knowledge.utils.llm_client_util import get_llm_client
+from knowledge.utils.bge_m3_embedding_util import get_beg_m3_embedding_model, generate_hybrid_embeddings
+from knowledge.utils.milvus_util import get_milvus_client, create_hybrid_search_requests, execute_hybrid_search_query, \
     fetch_chunks_by_chunk_ids
-from prompts.query.query_prompt import ENTITY_EXTRACT_SYSTEM_PROMPT
-from utils.neo4j_util import get_neo4j_driver
+from knowledge.prompts.query.query_prompt import ENTITY_EXTRACT_SYSTEM_PROMPT
+from knowledge.utils.neo4j_util import get_neo4j_driver
 
 # -------------------------------------------------
 # 常量

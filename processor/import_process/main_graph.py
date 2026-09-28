@@ -2,20 +2,20 @@ import json
 
 from langgraph.graph import StateGraph, END
 from langgraph.graph.state import CompiledStateGraph
-from processor.import_process.state import ImportGraphState
-from processor.import_process.nodes.pdf_to_md_node import PdfToMdNode
-from processor.import_process.nodes.html_to_md_node import HtmlToMdNode
-from processor.import_process.nodes.mp3_to_md_node import Mp3ToMdNode
-from processor.import_process.nodes.entry_node import EntryNode
-from processor.import_process.nodes.md_img_node import MarkDownImageNode
-from processor.import_process.nodes.document_split_node import DocumentSplitNode
-from processor.import_process.nodes.book_info_recognition_node import BookInfoRecognitionNode
-from processor.import_process.nodes.bge_embedding_chunks_node import BgeEmbeddingChunksNode
-from processor.import_process.nodes.import_milvus_node  import ImportMilvusNode
-from processor.import_process.nodes.kg_graph_node import KnowLedgeGraphNode
-from processor.import_process.nodes.md_img_node import MarkDownImageNode
-from processor.import_process.state import create_default_state
-from processor.import_process.base import setup_logging
+from knowledge.processor.import_process.state import ImportGraphState
+from knowledge.processor.import_process.nodes.pdf_to_md_node import PdfToMdNode
+from knowledge.processor.import_process.nodes.html_to_md_node import HtmlToMdNode
+from knowledge.processor.import_process.nodes.mp3_to_md_node import Mp3ToMdNode
+from knowledge.processor.import_process.nodes.entry_node import EntryNode
+from knowledge.processor.import_process.nodes.md_img_node import MarkDownImageNode
+from knowledge.processor.import_process.nodes.document_split_node import DocumentSplitNode
+from knowledge.processor.import_process.nodes.book_info_recognition_node import BookInfoRecognitionNode
+from knowledge.processor.import_process.nodes.bge_embedding_chunks_node import BgeEmbeddingChunksNode
+from knowledge.processor.import_process.nodes.import_milvus_node  import ImportMilvusNode
+from knowledge.processor.import_process.nodes.kg_graph_node import KnowLedgeGraphNode
+from knowledge.processor.import_process.nodes.md_img_node import MarkDownImageNode
+from knowledge.processor.import_process.state import create_default_state
+from knowledge.processor.import_process.base import setup_logging
 
 
 def import_router(state: ImportGraphState):

@@ -6,16 +6,16 @@
 from langgraph.graph import StateGraph, END
 from langgraph.graph.state import CompiledStateGraph
 from dotenv import load_dotenv
-from processor.query_process.state import QueryGraphState
+from knowledge.processor.query_process.state import QueryGraphState
 
-from processor.query_process.nodes.answer_output_node import AnswerOutputNode
-from processor.query_process.nodes.book_name_confirm_node import BookNameConfirmNode
-from processor.query_process.nodes.vector_search_node import VectorSearchNode
-from processor.query_process.nodes.hyde_search_node import HyDeSearchNode
-from processor.query_process.nodes.mcp_search_node import McpSearchNode
-from processor.query_process.nodes.kg_search_node import KnowledgeGraphSearchNode
-from processor.query_process.nodes.rrf_node import RrfNode
-from processor.query_process.nodes.rerank_node import RerankNode
+from knowledge.processor.query_process.nodes.answer_output_node import AnswerOutputNode
+from knowledge.processor.query_process.nodes.book_name_confirm_node import BookNameConfirmNode
+from knowledge.processor.query_process.nodes.vector_search_node import VectorSearchNode
+from knowledge.processor.query_process.nodes.hyde_search_node import HyDeSearchNode
+from knowledge.processor.query_process.nodes.mcp_search_node import McpSearchNode
+from knowledge.processor.query_process.nodes.kg_search_node import KnowledgeGraphSearchNode
+from knowledge.processor.query_process.nodes.rrf_node import RrfNode
+from knowledge.processor.query_process.nodes.rerank_node import RerankNode
 
 # 加载环境变量
 load_dotenv()
@@ -136,7 +136,7 @@ query_app = create_query_graph()
 
 
 if __name__ == "__main__":
-    from processor.query_process.base import setup_logging
+    from knowledge.processor.query_process.base import setup_logging
     import json
 
     setup_logging()

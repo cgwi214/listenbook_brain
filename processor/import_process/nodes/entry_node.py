@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
-from processor.import_process.base import BaseNode, setup_logging
-from processor.import_process.state import ImportGraphState
-from processor.import_process.exceptions import ValidationError
+from knowledge.processor.import_process.base import BaseNode, setup_logging
+from knowledge.processor.import_process.state import ImportGraphState
+from knowledge.processor.import_process.exceptions import ValidationError
 
 
 class EntryNode(BaseNode):

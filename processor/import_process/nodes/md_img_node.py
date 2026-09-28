@@ -6,11 +6,11 @@ from collections import deque
 from pathlib import Path
 from typing import Tuple, List, Deque
 from openai import OpenAI
-from utils.minio_util import get_minio_client
-from processor.import_process.base import BaseNode, setup_logging
-from processor.import_process.state import ImportGraphState
-from processor.import_process.exceptions import ValidationError, FileProcessingError, ImageProcessingError
-from processor.import_process.config import get_config
+from knowledge.utils.minio_util import get_minio_client
+from knowledge.processor.import_process.base import BaseNode, setup_logging
+from knowledge.processor.import_process.state import ImportGraphState
+from knowledge.processor.import_process.exceptions import ValidationError, FileProcessingError, ImageProcessingError
+from knowledge.processor.import_process.config import get_config
 
 
 class MarkDownImageNode(BaseNode):

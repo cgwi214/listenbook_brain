@@ -4,14 +4,14 @@ from json import JSONDecodeError
 from typing import List, Dict, Any, Optional, Tuple
 from langchain_core.messages import SystemMessage, HumanMessage
 from pymilvus import DataType
-from processor.import_process.base import BaseNode, setup_logging
-from processor.import_process.state import ImportGraphState
-from processor.import_process.exceptions import ValidationError, EmbeddingError
-from processor.import_process.config import get_config
-from utils.llm_client_util import get_llm_client
-from utils.milvus_util import get_milvus_client
-from utils.bge_m3_embedding_util import get_beg_m3_embedding_model
-from prompts.upload.import_prompt import BOOK_INFO_SYSTEM_PROMPT, \
+from knowledge.processor.import_process.base import BaseNode, setup_logging
+from knowledge.processor.import_process.state import ImportGraphState
+from knowledge.processor.import_process.exceptions import ValidationError, EmbeddingError
+from knowledge.processor.import_process.config import get_config
+from knowledge.utils.llm_client_util import get_llm_client
+from knowledge.utils.milvus_util import get_milvus_client
+from knowledge.utils.bge_m3_embedding_util import get_beg_m3_embedding_model
+from knowledge.prompts.upload.import_prompt import BOOK_INFO_SYSTEM_PROMPT, \
     BOOK_INFO_USER_PROMPT_TEMPLATE, ALLOWED_CONTENT_TYPES
 
 # 元数据的兜底内容类型（LLM 无法判断时）

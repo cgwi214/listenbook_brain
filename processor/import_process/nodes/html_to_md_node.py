@@ -3,9 +3,9 @@ from pathlib import Path
 from typing import Tuple
 from bs4 import BeautifulSoup, NavigableString, Tag
 
-from processor.import_process.base import BaseNode, setup_logging
-from processor.import_process.state import ImportGraphState
-from processor.import_process.exceptions import ValidationError, FileProcessingError, HtmlConversionError
+from knowledge.processor.import_process.base import BaseNode, setup_logging
+from knowledge.processor.import_process.state import ImportGraphState
+from knowledge.processor.import_process.exceptions import ValidationError, FileProcessingError, HtmlConversionError
 
 
 class HtmlToMdNode(BaseNode):

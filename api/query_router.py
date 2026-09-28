@@ -7,12 +7,12 @@ from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
-from core.paths import get_front_page_dir
-from core.deps import get_query_service
-from schema.query_schema import QueryRequest, QueryResponse, StreamSubmitResponse
-from services.query_service import QueryService
-from utils.sse_util import sse_generator
-from processor.query_process.base import setup_logging
+from knowledge.core.paths import get_front_page_dir
+from knowledge.core.deps import get_query_service
+from knowledge.schema.query_schema import QueryRequest, QueryResponse, StreamSubmitResponse
+from knowledge.services.query_service import QueryService
+from knowledge.utils.sse_util import sse_generator
+from knowledge.processor.query_process.base import setup_logging
 
 
 def create_app() -> FastAPI:

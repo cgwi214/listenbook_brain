@@ -1,0 +1,5 @@
+{"qid":"C001","query":"《济公传》里李修缘的父亲是谁？","role":"listener","forbidden":[{"source_file":"骆驼祥子"},{"source_file":"隋唐演义"},{"source_file":"三国演义"},{"source_file":"水浒传"}],"note":"越界召回：问济公传，期望召回济公传切片（李茂春是父亲），若召回其它4本书切片则书名过滤失效"}
+{"qid":"C002","query":"《隋唐演义》里杨坚的小字是什么？","role":"listener","forbidden":[{"source_file":"济公传"},{"source_file":"骆驼祥子"},{"source_file":"三国演义"},{"source_file":"水浒传"}],"note":"越界召回：问隋唐演义，期望命中那罗延，召回其它书即污染"}
+{"qid":"C003","query":"《骆驼祥子》第一章里北平的洋车夫分成了哪几派？","role":"editor","forbidden":[{"source_file":"济公传"},{"source_file":"隋唐演义"},{"source_file":"三国演义"},{"source_file":"水浒传"}],"note":"越界召回：祥子与洋车夫是强特征，误召回其它书说明书名过滤失效"}
+{"qid":"C004","query":"水浒传001-1 这段音频讲了什么？","role":"listener","forbidden":[{"source_file":"济公传"},{"source_file":"隋唐演义"},{"source_file":"三国演义"},{"source_file":"骆驼祥子"}],"note":"越界召回：问水浒传，期望只召回水浒传切片，误召回其它书即污染"}
+{"qid":"C005","query":"《三国演义》的作者是谁？","role":"listener","forbidden":[{"source_file":"济公传"},{"source_file":"隋唐演义"},{"source_file":"水浒传"},{"source_file":"骆驼祥子"}],"note":"越界召回：问三国元数据，期望命中罗贯中，误召回其它书即污染"}

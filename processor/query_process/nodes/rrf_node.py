@@ -1,6 +1,6 @@
 from typing import Dict, Any, List, Tuple
-from processor.query_process.state import QueryGraphState
-from processor.query_process.base import BaseNode, setup_logging
+from knowledge.processor.query_process.state import QueryGraphState
+from knowledge.processor.query_process.base import BaseNode, setup_logging
 
 
 class RrfNode(BaseNode):

@@ -34,6 +34,11 @@ class QueryGraphState(TypedDict):
     kg_chunks: list # 知识图谱切片
     kg_triples: list # 知识图谱关系
 
+    # ---------------- 评估相关（仅评测流程使用，正常问答不受影响）----------------
+    eval_mode: bool     # 评测模式： True 时关闭联网召回，保证结果可复现
+    eval_chunk_ids: list  # rerank 之后最终进入上下文的 chunk_id（由 eval 钩子写入）
+    eval_trace: list      # rerank 之后的完整精排轨迹（含分数与来源元数据）
+
 
 # ==================== 默认状态 ====================
 
@@ -57,7 +62,10 @@ DEFAULT_STATE: QueryGraphState = {
     "role": "listener",             # 提问角色（listener/operator/editor）
     "is_stream": False,             # 是否流式输出 (默认设为 False)
     "kg_chunks": [],                # 知识图谱切片
-    "kg_triples": []                # 知识图谱关系
+    "kg_triples": [],               # 知识图谱关系
+    "eval_mode": False,             # 评测模式（默认关闭，正常问答走联网召回）
+    "eval_chunk_ids": [],           # rerank 之后的 chunk_id 列表（评测钩子写入）
+    "eval_trace": [],               # rerank 之后的精排轨迹（评测钩子写入）
 }
 
 def create_default_state(**overrides) -> QueryGraphState:

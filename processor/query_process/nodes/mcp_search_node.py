@@ -8,9 +8,9 @@ logger = logging.getLogger(__name__)
 from typing import Dict, Any, List, Tuple, Union
 from agents.mcp import MCPServerStreamableHttp  # pip install openai_agents
 from langchain_core.messages import SystemMessage, HumanMessage
-from processor.query_process.state import QueryGraphState
-from processor.query_process.base import BaseNode, T
-from processor.query_process.exceptions import StateFieldError
+from knowledge.processor.query_process.state import QueryGraphState
+from knowledge.processor.query_process.base import BaseNode, T
+from knowledge.processor.query_process.exceptions import StateFieldError
 
 
 class McpSearchNode(BaseNode):
@@ -25,6 +25,13 @@ class McpSearchNode(BaseNode):
     """
 
     def process(self, state: QueryGraphState) -> Union[QueryGraphState, Dict[str, Any]]:
+
+        # 0. 评测模式下直接跳过联网
+        #    联网结果不可复现，且每次调用要好几秒；评测时既不需要也不该要。
+        #    （rerank 节点里也做了二次过滤，这里提前 return 是为了连网络请求都省掉）
+        if state.get("eval_mode"):
+            self.logger.info("评测模式：跳过 MCP 联网搜索")
+            return {"web_search_docs": []}
 
         # 1. 参数校验
         validated_rewritten_query, validated_book_names = self._validate_query_inputs(state)

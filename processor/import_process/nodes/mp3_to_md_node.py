@@ -4,10 +4,10 @@ import base64
 from pathlib import Path
 from typing import Tuple
 
-from processor.import_process.base import BaseNode, setup_logging
-from processor.import_process.state import ImportGraphState
-from processor.import_process.exceptions import ValidationError, FileProcessingError, AsrTranscriptionError
-from processor.import_process.config import get_config
+from knowledge.processor.import_process.base import BaseNode, setup_logging
+from knowledge.processor.import_process.state import ImportGraphState
+from knowledge.processor.import_process.exceptions import ValidationError, FileProcessingError, AsrTranscriptionError
+from knowledge.processor.import_process.config import get_config
 
 
 class Mp3ToMdNode(BaseNode):

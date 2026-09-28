@@ -8,13 +8,13 @@ import re
 from json import JSONDecodeError
 from typing import Dict, Any, List, Tuple
 from langchain_core.messages import HumanMessage, SystemMessage
-from processor.query_process.state import QueryGraphState
-from processor.query_process.base import BaseNode
-from utils.llm_client_util import get_llm_client
-from utils.milvus_util import get_milvus_client, create_hybrid_search_requests, execute_hybrid_search_query
-from utils.bge_m3_embedding_util import generate_hybrid_embeddings, get_beg_m3_embedding_model
-from prompts.query.query_prompt import BOOK_NAME_EXTRACT_TEMPLATE
-from utils.mongo_history_util import get_recent_messages, update_message_book_names
+from knowledge.processor.query_process.state import QueryGraphState
+from knowledge.processor.query_process.base import BaseNode
+from knowledge.utils.llm_client_util import get_llm_client
+from knowledge.utils.milvus_util import get_milvus_client, create_hybrid_search_requests, execute_hybrid_search_query
+from knowledge.utils.bge_m3_embedding_util import generate_hybrid_embeddings, get_beg_m3_embedding_model
+from knowledge.prompts.query.query_prompt import BOOK_NAME_EXTRACT_TEMPLATE
+from knowledge.utils.mongo_history_util import get_recent_messages, update_message_book_names
 
 
 class BookNameAligner():

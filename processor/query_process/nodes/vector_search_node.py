@@ -5,11 +5,11 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 from typing import Dict, Any, List, Tuple, Union
-from processor.query_process.state import QueryGraphState
-from processor.query_process.base import BaseNode, T ,setup_logging
-from processor.query_process.exceptions import StateFieldError
-from utils.bge_m3_embedding_util import get_beg_m3_embedding_model,generate_hybrid_embeddings
-from utils.milvus_util import get_milvus_client, create_hybrid_search_requests, execute_hybrid_search_query
+from knowledge.processor.query_process.state import QueryGraphState
+from knowledge.processor.query_process.base import BaseNode, T ,setup_logging
+from knowledge.processor.query_process.exceptions import StateFieldError
+from knowledge.utils.bge_m3_embedding_util import get_beg_m3_embedding_model,generate_hybrid_embeddings
+from knowledge.utils.milvus_util import get_milvus_client, create_hybrid_search_requests, execute_hybrid_search_query
 
 
 class VectorSearchNode(BaseNode):

@@ -6,14 +6,14 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
-from core.paths import get_front_page_dir
-from schema.upload_schema import UploadResponse
-from schema.task_schema import TaskStatusResponse
-from core.deps import get_task_service
-from core.deps import get_import_file_service
-from services.import_file_service import ImportFileService
-from services.task_service import TaskService
-from  processor.import_process.base import setup_logging
+from knowledge.core.paths import get_front_page_dir
+from knowledge.schema.upload_schema import UploadResponse
+from knowledge.schema.task_schema import TaskStatusResponse
+from knowledge.core.deps import get_task_service
+from knowledge.core.deps import get_import_file_service
+from knowledge.services.import_file_service import ImportFileService
+from knowledge.services.task_service import TaskService
+from  knowledge.processor.import_process.base import setup_logging
 
 
 # 内容类型白名单（与前端下拉、导入识别口径保持一致）

@@ -7,11 +7,11 @@ from typing import Sequence, List, Any, Dict, Optional
 from dataclasses import dataclass
 from pymilvus import DataType, MilvusClient
 from pymilvus.orm.schema import CollectionSchema
-from processor.import_process.base import BaseNode, setup_logging, T
-from processor.import_process.state import ImportGraphState
-from processor.import_process.exceptions import ValidationError, EmbeddingError
-from processor.import_process.config import get_config
-from utils.milvus_util import get_milvus_client
+from knowledge.processor.import_process.base import BaseNode, setup_logging, T
+from knowledge.processor.import_process.state import ImportGraphState
+from knowledge.processor.import_process.exceptions import ValidationError, EmbeddingError
+from knowledge.processor.import_process.config import get_config
+from knowledge.utils.milvus_util import get_milvus_client
 
 """
 
@@ -229,28 +229,42 @@ class ImportMilvusNode(BaseNode):
 
         return validated_chunks, dim, config
 
-    def _ensure_has_collection(self, milvus_client: MilvusClient, collection_name: str, dim: int,
-                               delete_flag: bool = True):
-
+    def _ensure_has_collection(self, milvus_client: MilvusClient, collection_name: str, dim: int):
         self.log_step("step2", f"准备集合 {collection_name} 创建")
-        # 1. 判断是否要删除集合
-        if delete_flag and milvus_client.has_collection(collection_name=collection_name):
-            self.logger.info(f"Milvus中的集合 {collection_name}已被删除")
-            milvus_client.drop_collection(collection_name=collection_name)
-
-        # 2. 判断集合是否有
+        # 关键修正：增量导入【绝不】删除已有集合。
+        #
+        # 旧逻辑：每次 import_milvus_node 执行都 drop_collection（delete_flag 默认 True）。
+        # 而导入图是「单文件单跑」——entry_node 按文件类型路由后，
+        # 每个文件独立走一遍 import_milvus_node。于是逐文件导入时：
+        #   导入 A → drop 全部 → 建集合 → 写 A
+        #   导入 B → drop 全部（A 没了）→ 建集合 → 写 B
+        #   ...
+        # 最终 Milvus 里只剩最后一个文件的切片，前面的书全部丢失；
+        # 反复 drop/recreate 还会让后续 hybrid_search 偶发 (code=5, unsupported ID type)。
+        #
+        # 现在改为：集合已存在就直接复用，不存在才创建。多本书 / 多次导入自然累积。
+        # 需要全量重建（如 schema / 维度变更）时，请显式调用 drop_collection()，
+        # 普通导入流程绝不触发整库删除。
         if milvus_client.has_collection(collection_name=collection_name):
-            self.logger(f"{collection_name}集合已经存在")
+            self.logger.info(f"{collection_name} 集合已存在，直接复用，不删除已有切片")
             return
 
-        # 3. 创建约束
+        # 1. 创建约束
         schema = _MilvusSchemaBuilder.build(milvus_client, dim)
 
-        # 4. 创建索引
+        # 2. 创建索引
         index = _MilvusIndexBuilder.build(milvus_client, collection_name)
 
-        # 5. 创建集合
+        # 3. 创建集合
         milvus_client.create_collection(collection_name=collection_name, schema=schema, index_params=index)
+        self.logger.info(f"{collection_name} 集合创建完成")
+
+    def drop_collection(self, milvus_client: MilvusClient, collection_name: str) -> None:
+        """显式清空整个集合。仅用于 schema 变更 / 全量重建等场景，
+        普通导入流程（process）不会调用，避免误删已入库切片。"""
+        if milvus_client.has_collection(collection_name=collection_name):
+            milvus_client.drop_collection(collection_name=collection_name)
+            self.logger.info(f"已显式删除集合 {collection_name}")
 
 
 from pathlib import Path

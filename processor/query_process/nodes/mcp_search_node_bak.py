@@ -10,9 +10,9 @@ from agents.mcp import MCPServerSse  # pip install openai_agents
 from langchain_core.messages import SystemMessage, HumanMessage
 from openai import AsyncOpenAI
 from agents import Agent, Runner, OpenAIChatCompletionsModel
-from processor.query_process.state import QueryGraphState
-from processor.query_process.base import BaseNode, T
-from processor.query_process.exceptions import StateFieldError
+from knowledge.processor.query_process.state import QueryGraphState
+from knowledge.processor.query_process.base import BaseNode, T
+from knowledge.processor.query_process.exceptions import StateFieldError
 
 
 class McpSearchNode(BaseNode):

@@ -1,7 +1,8 @@
 from typing import Dict, Any, List, Tuple
-from processor.query_process.state import QueryGraphState
-from processor.query_process.base import BaseNode, setup_logging, T
-from utils.bge_rerank_util import get_reranker_model
+from knowledge.processor.query_process.state import QueryGraphState
+from knowledge.processor.query_process.base import BaseNode, setup_logging, T
+from knowledge.utils.bge_rerank_util import get_reranker_model
+from knowledge.eval.hooks import attach_eval_trace
 
 """
 嵌入--->嵌入检索(混合策略检索：WeightReranker:归一化)（distance:分数【0,1】）
@@ -36,6 +37,11 @@ class RerankNode(BaseNode):
         cutoff_docs = self._cliff_cutoff(reranked_docs)
 
         state['reranked_docs'] = cutoff_docs
+
+        # 5. 评测钩子：把最终进入上下文的 chunk_id 与精排轨迹写回 State
+        #    挂在这里是因为 cutoff 之后的结果才是真正喂给 LLM 的那一批，
+        #    评测口径必须与线上行为一致。正常问答时开销可忽略（只是遍历一次列表）。
+        attach_eval_trace(state)
 
         return state
 
@@ -102,7 +108,10 @@ class RerankNode(BaseNode):
             final_docs.append(format_rrf_doc)
 
         # 2. 获取web远程的文档
-        for web_doc in (state.get('web_search_docs') or []):
+        #    评测模式下主动丢弃联网结果：联网内容每次都不一样，
+        #    不关掉的话同一份金标集跑两遍会得到两个分数，评估就失去意义了。
+        web_docs = [] if state.get('eval_mode') else (state.get('web_search_docs') or [])
+        for web_doc in web_docs:
 
             # 2.1 判断当前文档对象类型
             if not isinstance(web_doc, dict):

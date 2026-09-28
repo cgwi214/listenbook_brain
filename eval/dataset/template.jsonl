@@ -1,0 +1,2 @@
+{"qid": "G001", "query": "《骆驼祥子》这本书主要讲的是什么？", "role": "listener", "golden": [{"source_file": "骆驼祥子", "keywords": ["祥子"]}], "reference_answer": "《骆驼祥子》讲述北平洋车夫祥子三起三落、最终堕落的故事。", "must_include": ["祥子"], "must_not_include": [], "note": "基础事实题"}
+{"qid": "N001", "query": "今天东莞的天气怎么样？", "role": "listener", "expect_abstain": true, "forbidden": [], "note": "库外问题，期望系统明确拒答"}

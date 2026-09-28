@@ -1,0 +1,8 @@
+﻿{"qid":"N001","query":"今天东莞的天气怎么样？","role":"listener","expect_abstain":true,"forbidden":[],"note":"库外问题：知识库里没有天气信息，系统应明确说没找到"}
+{"qid":"N002","query":"怎么修理交换机？","role":"listener","expect_abstain":true,"forbidden":[{"source_file":"济公传"},{"source_file":"隋唐演义"},{"source_file":"三国演义"},{"source_file":"水浒传"},{"source_file":"骆驼祥子"}],"note":"库外问题：本评估语料是古典文学听书，不含万用表/电路知识；若系统答出说明 KG 残留设备说明书数据需清理"}
+{"qid":"N003","query":"《封神榜》有声书大概讲了什么内容？","role":"listener","expect_abstain":true,"forbidden":[{"source_file":"济公传"},{"source_file":"隋唐演义"},{"source_file":"三国演义"},{"source_file":"水浒传"},{"source_file":"骆驼祥子"}],"note":"库外书名：三体不在本评估语料中，既要拒答，也不能用其它书的切片硬凑"}
+{"qid":"N004","query":"《寻秦记》里的赵盘是个怎样的人？","role":"editor","expect_abstain":true,"forbidden":[{"source_file":"济公传"},{"source_file":"隋唐演义"},{"source_file":"三国演义"},{"source_file":"水浒传"},{"source_file":"骆驼祥子"}],"note":"库外书名：红楼梦不在语料中，应拒答"}
+{"qid":"N005","query":"2026年诺贝尔文学奖得主是谁？","role":"operator","expect_abstain":true,"forbidden":[],"note":"库外问题：时效信息不在库内，且评测模式已关闭联网，系统不能编造"}
+{"qid":"N006","query":"用 Python 怎么写一个简单的网络爬虫？","role":"listener","expect_abstain":true,"forbidden":[],"note":"库外问题：跨领域编程知识，与听书知识库无关，应拒答"}
+{"qid":"N007","query":"123456 乘以 789 等于多少？","role":"listener","expect_abstain":true,"forbidden":[],"note":"库外问题：纯数学计算，知识库是文学内容，应拒答"}
+{"qid":"N008","query":"今天 A 股大盘是涨还是跌？","role":"operator","expect_abstain":true,"forbidden":[],"note":"库外问题：实时金融行情不在库内，应拒答"}

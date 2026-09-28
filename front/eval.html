@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>听书知识库 · 评估中心</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* ==========================================================
+       与 chat.html / import.html 保持同一套书房风变量
+       ========================================================== */
+    :root{
+      --bg:#f7f4ee; --bg-card:#fffdf8; --line:#e6e1d4;
+      --text:#2a2622; --text-soft:#6c635a;
+      --accent:#c98a3a; --accent-soft:#f3e6d3;
+      --danger:#c25450; --ok:#3f8d5c;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;background:var(--bg);color:var(--text);
+      font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+      min-height:100vh;
+    }
+    header{
+      background:linear-gradient(135deg,#fffaf0 0%,#f3e6d3 100%);
+      border-bottom:1px solid var(--line);
+      padding:18px 28px;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    header h1{margin:0;font-size:20px;letter-spacing:1px}
+    header .sub{color:var(--text-soft);font-size:13px;margin-top:4px}
+
+    main{max-width:1080px;margin:28px auto;padding:0 24px}
+    .card{
+      background:var(--bg-card);border:1px solid var(--line);
+      border-radius:12px;padding:20px 24px;margin-bottom:20px;
+      box-shadow:0 2px 8px rgba(60,40,20,.04);
+    }
+    .card h2{margin:0 0 12px 0;font-size:16px;color:var(--text)}
+    .card .desc{color:var(--text-soft);font-size:13px;margin-bottom:14px}
+
+    .actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    button{
+      cursor:pointer;border:none;border-radius:8px;padding:10px 20px;
+      font-size:14px;font-weight:500;transition:transform .15s,opacity .15s;
+      font-family:inherit;
+    }
+    button:disabled{opacity:.5;cursor:not-allowed;transform:none}
+    button:not(:disabled):hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--accent);color:#fff}
+    .btn-primary:not(:disabled):hover{background:#b8762a}
+    .btn-secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
+    .btn-danger{background:var(--danger);color:#fff}
+    .btn-danger:not(:disabled):hover{background:#a64340}
+    .btn-ghost{background:transparent;color:var(--text-soft);border:1px dashed var(--line)}
+
+    .opts{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:13px;color:var(--text-soft)}
+    .opts label{display:flex;align-items:center;gap:6px;cursor:pointer}
+    .opts input,.opts select{padding:4px 8px;border:1px solid var(--line);border-radius:6px;background:#fff}
+
+    /* 日志输出框 */
+    #logBox{
+      height:440px;overflow-y:auto;background:#1f1c19;color:#f7f4ee;
+      border-radius:10px;padding:14px;font-family:"Cascadia Code","Fira Code","Consolas",monospace;
+      font-size:12px;line-height:1.6;white-space:pre-wrap;word-break:break-word;
+    }
+    #logBox .l-info{color:#e8e0d0}
+    #logBox .l-success{color:#9ed8a9}
+    #logBox .l-warn{color:#f4c97a}
+    #logBox .l-error{color:#f28b86}
+    #logBox .l-meta{color:#b8a999;font-style:italic}
+    .log-actions{display:flex;gap:8px;justify-content:flex-end;margin-bottom:8px}
+    .log-actions button{padding:6px 12px;font-size:12px}
+
+    /* 状态徽章 */
+    .badge{
+      display:inline-block;padding:2px 10px;border-radius:12px;
+      font-size:12px;background:var(--accent-soft);color:var(--accent);
+    }
+    .badge.idle{background:#eee;color:#888}
+    .badge.running{background:#e6f1ff;color:#2a6ec5}
+    .badge.done{background:#e6f5e9;color:var(--ok)}
+    .badge.error{background:#fbe6e5;color:var(--danger)}
+
+    /* 结果摘要卡（出现在日志框之上） */
+    .summary{display:none;background:var(--accent-soft);border:1px solid var(--accent);border-radius:10px;padding:16px 20px;margin-bottom:14px}
+    .summary.show{display:block}
+    .summary h3{margin:0 0 10px 0;font-size:15px;color:var(--accent)}
+    .summary .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+    .summary .metric{background:#fff;border-radius:8px;padding:10px 12px}
+    .summary .metric .k{font-size:12px;color:var(--text-soft)}
+    .summary .metric .v{font-size:18px;font-weight:600;color:var(--accent);margin-top:2px}
+
+    /* 配置信息条 */
+    .config-bar{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--text-soft)}
+    .config-bar .item{display:flex;align-items:center;gap:6px}
+    .config-bar .v{color:var(--text);font-weight:500}
+
+    footer{text-align:center;color:var(--text-soft);font-size:12px;padding:24px 0 40px}
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>听书知识库 · 评估中心</h1>
+      <div class="sub">基于金标集量化检索与生成质量，自动清理可重复运行</div>
+    </div>
+    <span id="statusBadge" class="badge idle">空闲</span>
+  </header>
+
+  <main>
+    <!-- 操作面板 -->
+    <section class="card">
+      <h2>运行评估</h2>
+      <div class="desc">
+        评估会读取 <code>knowledge/eval/dataset/</code> 下的金标集与反例集，
+        逐条跑查询图，自动计算 P / R / F1、准确率、引用准确率、忠实度等指标。
+        首次运行会先把 <code>eval/item</code> 里的测试材料导入知识库。
+      </div>
+
+      <div class="actions">
+        <button id="btnRun" class="btn-primary">评估</button>
+        <button id="btnRetry" class="btn-secondary">重试</button>
+        <button id="btnReset" class="btn-danger">刷新</button>
+        <button id="btnClearLog" class="btn-ghost">清空日志</button>
+        <span id="progressHint" style="color:var(--text-soft);font-size:13px"></span>
+      </div>
+
+      <div class="opts" style="margin-top:8px">
+        <label style="display:flex;align-items:center;gap:6px">
+          <input type="checkbox" id="optForceQuarantine" />
+          <span>强制隔离（按导入清单只清 eval 材料，绝不误伤业务语料）</span>
+        </label>
+        <span id="manifestHint" style="color:var(--text-soft);font-size:12px"></span>
+      </div>
+
+      <div class="opts">
+        <label>角色筛选
+          <select id="optRole">
+            <option value="">全部</option>
+            <option value="listener">听众</option>
+            <option value="operator">内容运营</option>
+            <option value="editor">内容编辑</option>
+          </select>
+        </label>
+        <label>截断 Top-K
+          <select id="optTopK">
+            <option value="">全部召回</option>
+            <option value="3">Top-3</option>
+            <option value="5">Top-5</option>
+            <option value="10">Top-10</option>
+          </select>
+        </label>
+        <label>用例上限
+          <input id="optLimit" type="number" min="1" placeholder="不限" style="width:80px">
+        </label>
+        <label><input id="optLLM" type="checkbox"> 开启 LLM 裁判（忠实度 / 相关性）</label>
+        <label><input id="optSkipImport" type="checkbox"> 跳过语料导入</label>
+        <label><input id="optHyde" type="checkbox" checked> 启用 HyDE 检索（取消勾选=关闭，省 token / 做 A/B 对照）</label>
+      </div>
+    </section>
+
+    <!-- 配置信息 -->
+    <section class="card">
+      <h2>当前配置</h2>
+      <div id="configBar" class="config-bar">加载中...</div>
+    </section>
+
+    <!-- 结果摘要 -->
+    <div id="summary" class="summary">
+      <h3>评估结果摘要</h3>
+      <div class="metrics">
+        <div class="metric"><div class="k">Micro-F1（按切片）</div><div class="v" id="mMicroF1">-</div></div>
+        <div class="metric"><div class="k">Macro-F1（按用例）</div><div class="v" id="mMacroF1">-</div></div>
+        <div class="metric"><div class="k">精确率 Micro</div><div class="v" id="mMicroP">-</div></div>
+        <div class="metric"><div class="k">召回率 Micro</div><div class="v" id="mMicroR">-</div></div>
+        <div class="metric"><div class="k">命中率</div><div class="v" id="mHit">-</div></div>
+        <div class="metric"><div class="k">MRR</div><div class="v" id="mMRR">-</div></div>
+        <div class="metric"><div class="k">引用准确率</div><div class="v" id="mCite">-</div></div>
+        <div class="metric"><div class="k">忠实度</div><div class="v" id="mFaith">-</div></div>
+        <div class="metric"><div class="k">误召回率（越界）</div><div class="v" id="mFRR">-</div></div>
+        <div class="metric"><div class="k">拒答准确率</div><div class="v" id="mAbst">-</div></div>
+        <div class="metric"><div class="k">用例数</div><div class="v" id="mCount">-</div></div>
+        <div class="metric"><div class="k">总耗时</div><div class="v" id="mCost">-</div></div>
+      </div>
+    </div>
+
+    <!-- 日志输出 -->
+    <section class="card">
+      <h2>运行日志</h2>
+      <div class="log-actions">
+        <button id="btnCopyLog" class="btn-ghost">复制日志</button>
+      </div>
+      <div id="logBox" class="l-info">等待评估任务...\n</div>
+    </section>
+  </main>
+
+  <footer>听书知识库 · RAG 评估模块 · 端口 8002</footer>
+
+  <script>
+    /* ==================== 工具 ==================== */
+    const $ = id => document.getElementById(id);
+    const logBox = $('logBox');
+
+    function appendLog(level, msg){
+      const line = document.createElement('div');
+      line.className = 'l-' + (level || 'info');
+      const ts = new Date().toLocaleTimeString('zh-CN',{hour12:false});
+      line.textContent = `[${ts}] [${(level||'info').toUpperCase()}] ${msg}`;
+      logBox.appendChild(line);
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    function setBadge(state, text){
+      const el = $('statusBadge');
+      el.className = 'badge ' + state;
+      el.textContent = text;
+    }
+
+    /* ==================== SSE ==================== */
+    let currentStream = null;
+    function closeStream(){
+      if (currentStream){
+        try{ currentStream.close(); }catch(_){}
+        currentStream = null;
+      }
+    }
+
+    function subscribeStream(taskId){
+      closeStream();
+      const url = `/eval/stream/${taskId}`;
+      const es = new EventSource(url);
+      currentStream = es;
+
+      es.addEventListener('ready', () => appendLog('info', 'SSE 通道已建立'));
+
+      es.addEventListener('log', e => {
+        try{
+          const data = JSON.parse(e.data);
+          appendLog(data.level || 'info', data.message || '');
+        }catch(_){ appendLog('warn', '[SSE] 无法解析日志：' + e.data); }
+      });
+
+      es.addEventListener('done', e => {
+        try{
+          const data = JSON.parse(e.data);
+          appendLog('success', `任务结束（task_id=${data.task_id}）`);
+        }catch(_){}
+        setBadge('done', '已完成');
+        es.close();
+        currentStream = null;
+        busy = false;
+        $('btnRun').disabled = false;
+        $('btnReset').disabled = false;
+        $('btnRetry').disabled = false;
+        $('progressHint').textContent = '';
+      });
+
+      es.addEventListener('result', e => {
+        try {
+          const data = JSON.parse(e.data);
+          const r = data.retrieval || {}, g = data.generation || {};
+          const n = data.negative || {}, x = data.cross_recall || {};
+          const pct = v => v == null ? '-' : `${(v * 100).toFixed(2)}%`;
+          $('mMicroF1').textContent = pct(r.micro_f1);
+          $('mMacroF1').textContent = pct(r.macro_f1);
+          $('mMicroP').textContent = pct(r.micro_precision);
+          $('mMicroR').textContent = pct(r.micro_recall);
+          $('mHit').textContent = pct(r.hit_rate);
+          $('mMRR').textContent = r.mrr == null ? '-' : r.mrr.toFixed(4);
+          $('mCite').textContent = pct(g.citation_accuracy);
+          $('mFaith').textContent = pct(g.faithfulness);
+          $('mFRR').textContent = pct(x.mean_false_recall_rate);
+          $('mAbst').textContent = pct(n.abstention_accuracy);
+          $('mCount').textContent = r.case_count ?? '-';
+          $('mCost').textContent = data.total_cost_ms == null ? '-' : `${(data.total_cost_ms / 1000).toFixed(1)}s`;
+          $('summary').classList.add('show');
+        } catch (_) { appendLog('warn', '[SSE] 无法解析评估结果'); }
+      });
+
+      es.onerror = () => {
+        // EventSource 自动重连；不主动关闭
+        appendLog('warn', '[SSE] 连接异常，等待自动重连...');
+      };
+    }
+
+    /* ==================== 启动任务 ==================== */
+    let busy = false;
+    async function startTask(endpoint, body, label){
+      if (busy){ appendLog('warn', '已有任务在跑，请稍候'); return; }
+      busy = true;
+      $('summary').classList.remove('show');
+      setBadge('running', label + '中...');
+      $('btnRun').disabled = true;
+      $('btnReset').disabled = true;
+      $('btnRetry').disabled = true;
+      $('progressHint').textContent = '后台线程已启动';
+      appendLog('info', `→ POST ${endpoint}`);
+
+      try{
+        const resp = await fetch(endpoint, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify(body),
+        });
+        if (!resp.ok){
+          const txt = await resp.text();
+          appendLog('error', `${label}启动失败：HTTP ${resp.status} ${txt}`);
+          setBadge('error', '启动失败');
+          busy = false;
+          $('btnRun').disabled = false;
+          $('btnReset').disabled = false;
+          $('btnRetry').disabled = false;
+          return;
+        }
+        const data = await resp.json();
+        appendLog('success', `${label}已启动，task_id=${data.task_id}`);
+        subscribeStream(data.task_id);
+      }catch(err){
+        appendLog('error', `${label}请求失败：${err.message || err}`);
+        setBadge('error', '请求失败');
+        busy = false;
+        $('btnRun').disabled = false;
+        $('btnReset').disabled = false;
+      }
+    }
+
+    /* ==================== 按钮事件 ==================== */
+    $('btnRun').addEventListener('click', () => {
+      const body = {
+        role:       $('optRole').value || null,
+        top_k:      $('optTopK').value ? parseInt($('optTopK').value,10) : null,
+        limit:      $('optLimit').value ? parseInt($('optLimit').value,10) : null,
+        enable_llm_judge:  $('optLLM').checked,
+        skip_import:       $('optSkipImport').checked,
+        hyde_enabled:      $('optHyde').checked,
+      };
+      startTask('/eval/run', body, '评估');
+    });
+
+    // 重试：跳过语料导入，直接重跑评测（语料已在库时使用）
+    $('btnRetry').addEventListener('click', () => {
+      const body = {
+        role:       $('optRole').value || null,
+        top_k:      $('optTopK').value ? parseInt($('optTopK').value,10) : null,
+        limit:      $('optLimit').value ? parseInt($('optLimit').value,10) : null,
+        enable_llm_judge:  $('optLLM').checked,
+        skip_import:       true,
+        hyde_enabled:      $('optHyde').checked,
+      };
+      startTask('/eval/run', body, '重试');
+    });
+
+    $('btnReset').addEventListener('click', () => {
+      const force = $('optForceQuarantine').checked;
+      const msg = force
+        ? '确认强制隔离？将按导入清单只清评估材料，绝不误伤业务语料。'
+        : '确认刷新？将清空 Milvus 三张集合、Neo4j 图谱、本地临时目录中 eval 材料产生的数据，业务知识库不受影响。';
+      if (!confirm(msg)) return;
+      startTask('/eval/reset', { clean_reports: false, force_quarantine: force }, '刷新');
+    });
+
+    /* ==================== 导入清单提示 ==================== */
+    (async () => {
+      try {
+        const resp = await fetch('/eval/config');
+        const cfg = await resp.json();
+        const sources = cfg.import_manifest_sources || [];
+        const hint = $('manifestHint');
+        if (sources.length === 0) {
+          hint.textContent = '导入清单：尚无记录（首次评估时会自动写入）';
+        } else {
+          hint.textContent = `导入清单：${cfg.import_manifest_count} 条 → ${
+            sources.length > 5 ? sources.slice(0, 5).join('、') + ' …（共 ' + sources.length + ' 条）' : sources.join('、')
+          }`;
+        }
+      } catch (e) {
+        $('manifestHint').textContent = '导入清单：获取失败';
+      }
+    })();
+
+    $('btnClearLog').addEventListener('click', () => {
+      logBox.innerHTML = '';
+    });
+
+    $('btnCopyLog').addEventListener('click', async () => {
+      try{
+        await navigator.clipboard.writeText(logBox.innerText);
+        appendLog('success', '日志已复制到剪贴板');
+      }catch(err){
+        appendLog('warn', '复制失败，请手动选择文本');
+      }
+    });
+
+    /* ==================== 启动时拉取配置 ==================== */
+    async function loadConfig(){
+      try{
+        const resp = await fetch('/eval/config');
+        const cfg = await resp.json();
+        $('configBar').innerHTML = `
+          <span class="item">金标集 <span class="v">${cfg.golden_count}</span> 条</span>
+          <span class="item">越界召回集 <span class="v">${cfg.cross_recall_count}</span> 条</span>
+          <span class="item">反例集 <span class="v">${cfg.negative_count}</span> 条</span>
+          <span class="item">数据集 <span class="v">${cfg.dataset_dir}</span></span>
+          <span class="item">报告目录 <span class="v">${cfg.report_dir}</span></span>
+        `;
+      }catch(err){
+        $('configBar').innerHTML = '<span style="color:var(--danger)">配置加载失败：' + err.message + '</span>';
+      }
+    }
+    loadConfig();
+  </script>
+</body>
+</html>

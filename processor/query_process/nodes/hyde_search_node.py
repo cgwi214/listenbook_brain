@@ -6,20 +6,26 @@ logger = logging.getLogger(__name__)
 
 from typing import List, Tuple, Union,Any,Dict
 from langchain_core.messages import SystemMessage, HumanMessage
-from processor.query_process.state import QueryGraphState
-from processor.query_process.base import BaseNode
-from processor.query_process.exceptions import StateFieldError
+from knowledge.processor.query_process.state import QueryGraphState
+from knowledge.processor.query_process.base import BaseNode
+from knowledge.processor.query_process.exceptions import StateFieldError
 
-from utils.llm_client_util import get_llm_client
-from prompts.query.query_prompt import USER_HYDE_PROMPT_TEMPLATE
-from utils.milvus_util import get_milvus_client, create_hybrid_search_requests, execute_hybrid_search_query
-from utils.bge_m3_embedding_util import generate_hybrid_embeddings, get_beg_m3_embedding_model
+from knowledge.utils.llm_client_util import get_llm_client
+from knowledge.prompts.query.query_prompt import USER_HYDE_PROMPT_TEMPLATE
+from knowledge.utils.milvus_util import get_milvus_client, create_hybrid_search_requests, execute_hybrid_search_query
+from knowledge.utils.bge_m3_embedding_util import generate_hybrid_embeddings, get_beg_m3_embedding_model
 
 
 class HyDeSearchNode(BaseNode):
     name = "hyde_search_node"
 
     def process(self, state: QueryGraphState) -> Union[QueryGraphState,Dict[str,Any]]:
+
+        # 0. 评估开关：关闭 HyDE 时跳过假设性文档生成与混合检索
+        #    （省一次 LLM 调用，且不参与 RRF 融合）
+        if not self.config.hyde_enabled:
+            self.logger.info("HyDE 已禁用（hyde_enabled=False），跳过假设性文档生成与混合检索")
+            return {}
 
         # 1. 参数校验
         validated_query, validate_book_names, validate_author_names, validate_categories = self._validate_query_inputs(state)
@@ -182,7 +188,7 @@ class HyDeSearchNode(BaseNode):
 #         print(json.dumps(r, ensure_ascii=False, indent=2))
 
 if __name__ == "__main__":
-    from processor.query_process.base import setup_logging
+    from knowledge.processor.query_process.base import setup_logging
     import json
 
     setup_logging()

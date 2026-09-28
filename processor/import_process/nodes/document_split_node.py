@@ -1,10 +1,10 @@
 import os, re, json
 from typing import Tuple, List, Dict, Any
-from processor.import_process.base import BaseNode, setup_logging
-from processor.import_process.state import ImportGraphState
-from processor.import_process.config import get_config
+from knowledge.processor.import_process.base import BaseNode, setup_logging
+from knowledge.processor.import_process.state import ImportGraphState
+from knowledge.processor.import_process.config import get_config
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from utils.markdown_util import MarkdownTableLinearizer
+from knowledge.utils.markdown_util import MarkdownTableLinearizer
 
 
 class DocumentSplitNode(BaseNode):

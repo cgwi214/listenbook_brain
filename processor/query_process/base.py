@@ -7,11 +7,12 @@ from abc import ABC, abstractmethod
 from typing import TypeVar, Optional
 import logging
 
-from processor.query_process.config import QueryConfig, get_config
-from processor.query_process.exceptions import QueryProcessError
-from utils.sse_util import push_sse_event
-from utils.task_util import add_running_task, add_done_task, get_done_task_list, get_running_task_list, \
+from knowledge.processor.query_process.config import QueryConfig, get_config
+from knowledge.processor.query_process.exceptions import QueryProcessError
+from knowledge.utils.sse_util import push_sse_event
+from knowledge.utils.task_util import add_running_task, add_done_task, get_done_task_list, get_running_task_list, \
     get_task_status
+from knowledge.eval.perf import get_tracer
 
 T = TypeVar("T")  # 泛型状态类型
 
@@ -70,6 +71,10 @@ class BaseNode(ABC):
         task_id = state.get("task_id", "")
         is_stream = state.get("is_stream", False)
 
+        # 性能埋点：只有为当前 task_id 注册过采集器时才打点。
+        # 正常问答链路不会注册，这里只是一次字典查询，开销可忽略。
+        tracer = get_tracer(task_id)
+
         try:
             self.logger.info(f"--- {self.name} 开始 ---")
             if task_id:
@@ -77,7 +82,16 @@ class BaseNode(ABC):
                 if is_stream:
                     self._push_progress(task_id)
 
-            result = self.process(state)
+            if tracer:
+                tracer.node_start(self.name)
+            try:
+                result = self.process(state)
+            finally:
+                # 用 finally 保证节点抛异常时也能把耗时记上，
+                # 否则最慢的那次（失败重试）反而从报表里消失了
+                if tracer:
+                    tracer.node_end(self.name)
+
             self.logger.info(f"--- {self.name} 完成 ---")
             if task_id:
                 add_done_task(task_id, self.name)

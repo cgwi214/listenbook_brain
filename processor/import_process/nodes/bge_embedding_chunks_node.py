@@ -1,11 +1,11 @@
 import os, json
 from typing import Dict, List, Any
 from pathlib import Path
-from processor.import_process.base import BaseNode, setup_logging
-from processor.import_process.state import ImportGraphState
-from processor.import_process.exceptions import ValidationError, EmbeddingError
-from processor.import_process.config import get_config
-from utils.bge_m3_embedding_util import get_beg_m3_embedding_model
+from knowledge.processor.import_process.base import BaseNode, setup_logging
+from knowledge.processor.import_process.state import ImportGraphState
+from knowledge.processor.import_process.exceptions import ValidationError, EmbeddingError
+from knowledge.processor.import_process.config import get_config
+from knowledge.utils.bge_m3_embedding_util import get_beg_m3_embedding_model
 
 
 class BgeEmbeddingChunksNode(BaseNode):

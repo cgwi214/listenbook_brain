@@ -1,14 +1,14 @@
 """答案输出节点 —— 骨架版本（第一步）"""
 
 from typing import List, Dict, Any, Tuple
-from processor.query_process.base import BaseNode
-from processor.query_process.state import QueryGraphState
-from prompts.query.query_prompt import ANSWER_PROMPT
-from prompts.query.role_profile import get_role_system
-from utils.llm_client_util import get_llm_client
-from utils.task_util import set_task_result
-from utils.sse_util import push_sse_event, SSEEvent
-from utils.mongo_history_util import save_chat_message
+from knowledge.processor.query_process.base import BaseNode
+from knowledge.processor.query_process.state import QueryGraphState
+from knowledge.prompts.query.query_prompt import ANSWER_PROMPT
+from knowledge.prompts.query.role_profile import get_role_system
+from knowledge.utils.llm_client_util import get_llm_client
+from knowledge.utils.task_util import set_task_result
+from knowledge.utils.sse_util import push_sse_event, SSEEvent
+from knowledge.utils.mongo_history_util import save_chat_message
 
 
 class AnswerOutputNode(BaseNode):
@@ -234,7 +234,7 @@ if __name__ == "__main__":
     load_dotenv()
 
     # 初始化日志
-    from processor.query_process.base import setup_logging
+    from knowledge.processor.query_process.base import setup_logging
     setup_logging()
 
     print("=" * 60)
