@@ -29,7 +29,7 @@ from pymilvus import (
     RRFRanker,
 )
 
-from utils.bge_m3_embedding_util import get_beg_m3_embedding_model
+from knowledge.utils.bge_m3_embedding_util import get_beg_m3_embedding_model
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #  配置常量

@@ -11,7 +11,7 @@ create_collection(collection_name,schema,index_params)---自动 高阶版本（�
 import time
 
 from pymilvus import MilvusClient, DataType
-from utils.bge_m3_embedding_util import get_beg_m3_embedding_model
+from knowledge.utils.bge_m3_embedding_util import get_beg_m3_embedding_model
 
 if __name__ == '__main__':
 

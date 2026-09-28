@@ -4,11 +4,11 @@ import uuid
 import logging
 from typing import List, Dict, Any
 
-from processor.query_process.main_graph import query_app
-from utils.task_util import update_task_status, get_task_result, \
+from knowledge.processor.query_process.main_graph import query_app
+from knowledge.utils.task_util import update_task_status, get_task_result, \
     get_task_status, get_done_task_list, get_running_task_list, \
     TASK_STATUS_PROCESSING, TASK_STATUS_COMPLETED
-from utils.sse_util import create_sse_queue, push_sse_event
+from knowledge.utils.sse_util import create_sse_queue, push_sse_event
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +68,7 @@ class QueryService:
         }
 
     def get_history(self, session_id: str, limit: int = 50) -> List[Dict[str, Any]]:
-        from utils.mongo_history_util import get_recent_messages
+        from knowledge.utils.mongo_history_util import get_recent_messages
         records = get_recent_messages(session_id, limit=limit)
         return [
             {
@@ -84,5 +84,5 @@ class QueryService:
         ]
 
     def clear_history(self, session_id: str) -> int:
-        from utils.mongo_history_util import clear_history
+        from knowledge.utils.mongo_history_util import clear_history
         return clear_history(session_id)

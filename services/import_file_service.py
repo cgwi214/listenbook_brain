@@ -7,11 +7,11 @@ from datetime import datetime
 import shutil
 from typing import Tuple
 from fastapi import UploadFile, HTTPException
-from core.paths import get_local_base_dir
-from utils.minio_util import get_minio_client
-from services.task_service import TaskService
-from processor.import_process.state import ImportGraphState
-from processor.import_process.main_graph import kb_import__graph_app
+from knowledge.core.paths import get_local_base_dir
+from knowledge.utils.minio_util import get_minio_client
+from knowledge.services.task_service import TaskService
+from knowledge.processor.import_process.state import ImportGraphState
+from knowledge.processor.import_process.main_graph import kb_import__graph_app
 
 
 class ImportFileService:
