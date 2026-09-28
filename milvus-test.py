@@ -1,4 +1,4 @@
-from utils.milvus_util import get_milvus_client
+from knowledge.utils.milvus_util import get_milvus_client
 
 
 client = get_milvus_client()
